@@ -77,7 +77,9 @@ export const Repl: Component<{
   const uno = createGenerator({ presets: [presetUno()] });
   const ydoc = new Y.Doc();
   const indexeddbProvider = new IndexeddbPersistence(props.replId, ydoc);
-  const wsUrl = `ws://${window.location.host}/ws`;
+  // const wsUrl = `ws://${window.location.host}/ws`;
+  // https://sailwind.lawrencecchen.repl.co/
+  const wsUrl = `wss://sailwind.lawrencecchen.repl.co`;
   const wsProvider = new WebsocketProvider(wsUrl, props.replId, ydoc, {
     connect: props.enableWebsocketProvider,
   });
@@ -86,10 +88,13 @@ export const Repl: Component<{
     setCode(yText.toJSON());
   });
 
-  indexeddbProvider.once("synced", () => {
-    if (props.defaultValue && yText.length === 0) {
-      yText.insert(0, props.defaultValue);
-    }
+  wsProvider.once("synced", () => {
+    console.log("Synced!", yText.toJSON());
+    ydoc.transact(() => {
+      if (props.defaultValue && yText.length === 0) {
+        yText.insert(0, props.defaultValue);
+      }
+    });
   });
 
   const undoManager = new Y.UndoManager(yText, {
