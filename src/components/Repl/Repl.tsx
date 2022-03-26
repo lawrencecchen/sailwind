@@ -77,13 +77,10 @@ export const Repl: Component<{
   const uno = createGenerator({ presets: [presetUno()] });
   const ydoc = new Y.Doc();
   const indexeddbProvider = new IndexeddbPersistence(props.replId, ydoc);
-
-  const wsProvider = new WebsocketProvider(
-    "ws://localhost:1234",
-    props.replId,
-    ydoc,
-    { connect: props.enableWebsocketProvider }
-  );
+  const wsUrl = `ws://${window.location.host}/ws`;
+  const wsProvider = new WebsocketProvider(wsUrl, props.replId, ydoc, {
+    connect: props.enableWebsocketProvider,
+  });
   const yText = ydoc.getText("codemirror");
   yText.observe(() => {
     setCode(yText.toJSON());

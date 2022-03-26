@@ -21,4 +21,14 @@ export default defineConfig({
       sucrase: "sucrase/dist/index.js",
     },
   },
+  server: {
+    proxy: {
+      "/ws": {
+        target: "ws://localhost:1234",
+        ws: true,
+        secure: false,
+        changeOrigin: true,
+      },
+    },
+  },
 });

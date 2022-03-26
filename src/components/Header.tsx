@@ -12,6 +12,15 @@ export const Header: Component<{ replId: string; showId?: boolean }> = (
         Sailwind
       </Link>
       <p class="ml-4 text-xs">A very fast Tailwind/React repl.</p>
+      <a
+        href="https://github.com/lawrencecchen/sailwind"
+        rel="noopener noreferrer"
+        target="_blank"
+        class="flex items-center ml-2"
+        aria-label="View on GitHub"
+      >
+        <span class="i-mdi-github w-5 h-5"></span>
+      </a>
       <div className="ml-auto mr-0">
         <Link
           href={"/" + props.replId}

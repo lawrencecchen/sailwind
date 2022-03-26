@@ -3,7 +3,9 @@
   "scripts": {
     "dev": "solid-start dev",
     "build": "solid-start build",
-    "start": "solid-start start"
+    "start": "concurrently npm:start:*",
+    "start:solid": "solid-start start",
+    "start:y-websockets": "HOST=localhost PORT=1234 YPERSISTENCE=./dbDir node ./node_modules/y-websocket/bin/server.js"
   },
   "type": "module",
   "devDependencies": {
@@ -30,6 +32,7 @@
     "@iconify/json": "^2.1.20",
     "@unocss/core": "^0.30.4",
     "@unocss/preset-uno": "^0.30.4",
+    "concurrently": "^7.0.0",
     "nanoid": "^3.3.1",
     "random-word-slugs": "^0.1.6",
     "sucrase": "^3.20.3",
