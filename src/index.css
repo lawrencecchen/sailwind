@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.ͼ1.cm-editor.cm-focused {
+  outline: none;
+}
+
+.cm-editor {
+  height: 100%;
+}
