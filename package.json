@@ -1,14 +1,19 @@
 {
   "name": "sailwind",
   "scripts": {
-    "dev": "solid-start dev",
+    "dev": "concurrently pnpm:dev:*",
+    "dev:solid": "solid-start dev",
+    "dev:yjs": "HOST=localhost PORT=8080 YPERSISTENCE=./dbDir node ./node_modules/y-websocket/bin/server.js",
     "build": "solid-start build",
-    "start": "concurrently npm:start:*",
+    "start": "solid-start start",
+    "start-all": "concurrently pnpm:start:*",
     "start:solid": "solid-start start",
-    "start:y-websockets": "HOST=localhost PORT=1234 YPERSISTENCE=./dbDir node ./node_modules/y-websocket/bin/server.js"
+    "start:y-websockets": "HOST=localhost PORT=8080 YPERSISTENCE=./dbDir node ./node_modules/y-websocket/bin/server.js",
+    "cert": "rm -rf .cert && mkdir -p .cert && mkcert -key-file ./.cert/key.pem -cert-file ./.cert/cert.pem 'localhost'"
   },
   "type": "module",
   "devDependencies": {
+    "@babel/parser": "^7.17.8",
     "autoprefixer": "^10.4.2",
     "postcss": "^8.4.6",
     "solid-app-router": "^0.3.2",
@@ -43,5 +48,6 @@
     "y-webrtc": "^10.2.2",
     "y-websocket": "^1.4.0",
     "yjs": "^13.5.31"
-  }
+  },
+  "main": "./dist/index.js"
 }

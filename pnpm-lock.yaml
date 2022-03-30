@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@babel/parser': ^7.17.8
   '@codemirror/basic-setup': ^0.19.1
   '@codemirror/commands': ^0.19.8
   '@codemirror/lang-javascript': ^0.19.7
@@ -53,13 +54,14 @@ dependencies:
   yjs: 13.5.31
 
 devDependencies:
+  '@babel/parser': 7.17.8
   autoprefixer: 10.4.4_postcss@8.4.12
   postcss: 8.4.12
   solid-app-router: 0.3.2_solid-js@1.3.13
   solid-js: 1.3.13
   solid-meta: 0.27.3_solid-js@1.3.13
-  solid-start: 0.1.0-alpha.69_dd0a6a10e5f7b16d27d7286030fa2e9f
-  solid-start-node: 0.1.0-alpha.69_cdd1da9906978fc7dd3d3d3ca5d442b6
+  solid-start: 0.1.0-alpha.73_dd0a6a10e5f7b16d27d7286030fa2e9f
+  solid-start-node: 0.1.0-alpha.73_f4600ecf6f1a45d6d2fa6a0b6aeb7241
   tailwindcss: 3.0.23_autoprefixer@10.4.4
   typescript: 4.6.3
   vite: 2.8.6
@@ -2538,8 +2540,8 @@ packages:
       solid-js: 1.3.13
     dev: true
 
-  /solid-start-node/0.1.0-alpha.69_cdd1da9906978fc7dd3d3d3ca5d442b6:
-    resolution: {integrity: sha512-4kgC/0xI975gl7ZG6kDlL5/KIqEcduhf7qOPN8Kez70Bl3LxAD1pPb6pquFnxxXrddHFoAYHU/uRNOag0oWCdg==}
+  /solid-start-node/0.1.0-alpha.73_f4600ecf6f1a45d6d2fa6a0b6aeb7241:
+    resolution: {integrity: sha512-gFJaT7l4jp1ox3TODQVG2PlvrVEAuugZR5QkkMFTZObGqSEay3tBn3VyWG6QWYsGBJwNc5Z2xmrkqhd17Ufmwg==}
     peerDependencies:
       solid-start: next
       undici: ^4.12.2
@@ -2552,13 +2554,13 @@ packages:
       polka: 1.0.0-next.22
       rollup: 2.70.1
       sirv: 1.0.19
-      solid-start: 0.1.0-alpha.69_dd0a6a10e5f7b16d27d7286030fa2e9f
+      solid-start: 0.1.0-alpha.73_dd0a6a10e5f7b16d27d7286030fa2e9f
       undici: 4.16.0
       vite: 2.8.6
     dev: true
 
-  /solid-start/0.1.0-alpha.69_dd0a6a10e5f7b16d27d7286030fa2e9f:
-    resolution: {integrity: sha512-EBI54HCB2v8WTtnyo5ctIvukQicNrHOg3BcNSsEOlo5DNAAC+brDIuUwUGlDwM55Qedsxw4LOv7CQrUcqhYjlQ==}
+  /solid-start/0.1.0-alpha.73_dd0a6a10e5f7b16d27d7286030fa2e9f:
+    resolution: {integrity: sha512-43D6qHcmZUd4p0D//GS6YVBUrzQ8BC1Pi+oo5hE5iKVP1KbVVzDJAsZpz4hWPRjl1enSwZBrA/PjPD8wUryTHA==}
     hasBin: true
     peerDependencies:
       solid-app-router: ^0.3.0
@@ -2590,7 +2592,7 @@ packages:
       vite-plugin-inspect: 0.3.15_vite@2.8.6
       vite-plugin-solid: 2.2.6
     optionalDependencies:
-      solid-start-node: 0.1.0-alpha.69_cdd1da9906978fc7dd3d3d3ca5d442b6
+      solid-start-node: 0.1.0-alpha.73_f4600ecf6f1a45d6d2fa6a0b6aeb7241
     transitivePeerDependencies:
       - less
       - sass
