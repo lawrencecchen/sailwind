@@ -18,7 +18,7 @@ const HoveredElement: Component<{ boundingClientRect: DOMRect }> = (props) => {
 };
 
 const Srcdoc = () => {
-  const [inspectModeEnabled, setInspectModeEnabled] = createSignal(true);
+  const [inspectModeEnabled, setInspectModeEnabled] = createSignal(false);
   const [hoveredElement, setHoveredElement] = createSignal<HTMLElement>();
   const [
     hoveredElementBoundingClientRect,

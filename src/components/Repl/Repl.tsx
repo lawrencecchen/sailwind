@@ -205,7 +205,7 @@ export const Repl: Component<{
   }
 
   return (
-    <div class="flex grow">
+    <div class="flex grow min-h-0">
       <div class="grow overflow-hidden">
         <CodeMirror
           extensions={[
