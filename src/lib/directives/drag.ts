@@ -2,14 +2,15 @@ import { onCleanup } from "solid-js";
 
 export function drag(el, accessor) {
   let initialEvent;
-  let immutableContainer: any;
+  let stuff: any;
   let overlay: HTMLDivElement;
 
   function mousemove(e) {
-    const result = accessor?.()?.onDrag?.(e, initialEvent, immutableContainer);
-    if (!immutableContainer) {
-      immutableContainer = result;
-    }
+    const result = accessor?.()?.onDrag?.(e, initialEvent, stuff);
+    // if (!stuff) {
+    //   stuff = result;
+    // }
+    stuff = result;
   }
 
   function mousedown(e) {
@@ -28,11 +29,11 @@ export function drag(el, accessor) {
 
   function reset(e) {
     initialEvent = null;
-    immutableContainer = null;
+    stuff = null;
     document.body.style.userSelect = "auto";
     document.body.style.cursor = "auto";
     if (overlay) {
-      document.body.removeChild(overlay);
+      overlay.remove();
     }
     accessor?.()?.onDragEnd?.(e);
   }

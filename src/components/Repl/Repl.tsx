@@ -2,7 +2,7 @@ import { basicSetup, EditorState, EditorView } from "@codemirror/basic-setup";
 import { indentWithTab } from "@codemirror/commands";
 import { javascript } from "@codemirror/lang-javascript";
 import { Extension } from "@codemirror/state";
-import { keymap } from "@codemirror/view";
+import { keymap, ViewUpdate } from "@codemirror/view";
 import { createGenerator } from "@unocss/core";
 import presetUno from "@unocss/preset-uno";
 import {
@@ -23,6 +23,15 @@ import { WebsocketProvider } from "y-websocket";
 import * as Y from "yjs";
 import { drag } from "~/lib/directives/drag";
 import { wrap } from "~/lib/utils/wrap";
+import { createDebounce } from "@solid-primitives/debounce";
+import { parse, type ParseResult } from "@babel/parser";
+import { Parser } from "acorn";
+import jsx from "acorn-jsx";
+import * as walk from "acorn-walk";
+import { extend } from "acorn-jsx-walk";
+
+import { createThrottledMemo } from "@solid-primitives/memo";
+import { Transition } from "solid-transition-group";
 drag;
 
 const customTheme = EditorView.theme({
@@ -77,6 +86,7 @@ export const Repl: Component<{
   const uno = createGenerator({ presets: [presetUno()] });
   const ydoc = new Y.Doc();
   let indexeddbProvider = new IndexeddbPersistence(props.replId, ydoc);
+  // @ts-ignore
   let wsUrl = import.meta.env.VITE_WEBSOCKET_URL as string;
   if (location.protocol === "https:") {
     wsUrl = wsUrl.replace("ws://", "wss://");
@@ -106,10 +116,11 @@ export const Repl: Component<{
     trackedOrigins: new Set([]),
   });
 
-  const [previewWidth, setPreviewWidth] = createSignal();
+  const [previewWidth, setPreviewWidth] = createSignal<number>();
   const [code, setCode] = createSignal(null);
   const [error, setError] = createSignal(false);
   const [iframeLoaded, setIframeLoaded] = createSignal(false);
+  const [resizing, setResizing] = createSignal(false);
   const outputJavascript = createMemo(() => {
     if (!code()) {
       return "";
@@ -151,6 +162,28 @@ export const Repl: Component<{
     wsProvider.destroy();
   });
 
+  const parser = Parser.extend(jsx());
+  extend(walk.base);
+  const ast = createThrottledMemo(() => {
+    if (!code()) {
+      return null;
+    }
+    try {
+      return parser.parse(code(), {
+        sourceType: "module",
+        ecmaVersion: 2022,
+      });
+      // return parse(code(), {
+      //   sourceType: "module",
+      //   plugins: ["jsx", "typescript"],
+      // });
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }, 20);
+  const setResizingDebounce = createDebounce(setResizing, 1000);
+
   createEffect(() => {
     if (iframeLoaded() && !error()) {
       const scripts = [outputJavascript()];
@@ -159,8 +192,20 @@ export const Repl: Component<{
     }
   });
 
+  function handleViewUpdate(v: ViewUpdate) {
+    if (!v.selectionSet) {
+      return;
+    }
+    const position = v.state.selection.ranges?.[0].from;
+    if (ast()) {
+      console.log(ast());
+      const selectedNode = walk.findNodeAround(ast(), position);
+      console.log(selectedNode);
+    }
+  }
+
   return (
-    <div class="flex h-full">
+    <div class="flex grow">
       <div class="grow overflow-hidden">
         <CodeMirror
           extensions={[
@@ -168,6 +213,7 @@ export const Repl: Component<{
             keymap.of([indentWithTab]),
             javascript({ jsx: true, typescript: true }),
             yCollab(yText, wsProvider.awareness, { undoManager }),
+            EditorView.updateListener.of(handleViewUpdate),
             customTheme,
           ]}
           docName="hello-world"
@@ -197,16 +243,40 @@ export const Repl: Component<{
         class="shrink-0 h-full relative"
         ref={previewRef}
       >
+        <Transition
+          exitClass="opacity-100"
+          exitToClass="opacity-0"
+          exitActiveClass="duration-200 transition"
+        >
+          <Show when={resizing()}>
+            <div class="absolute top-2 right-2 bg-white border shadow-md rounded-2xl px-2 py-1 text-xs font-hack text-gray-600">
+              {previewWidth()}
+            </div>
+          </Show>
+        </Transition>
         <div
-          className="absolute -left-1 h-full w-2  cursor-ew-resize"
+          class="absolute -left-1 h-full w-2  cursor-ew-resize"
           use:drag={{
-            onDrag: (e, initialEvent, previewWidth) => {
-              if (!previewWidth) {
-                previewWidth = previewRef.clientWidth;
+            onDragStart: () => {
+              setResizingDebounce.clear();
+              setResizing(true);
+            },
+            onDrag: (e, initialEvent, stuff) => {
+              if (!stuff) {
+                stuff = {
+                  initialWidth: previewRef.clientWidth,
+                };
               }
+              const { initialWidth } = stuff;
               const offset = initialEvent.clientX - e.clientX;
-              setPreviewWidth(wrap(8, Infinity, previewWidth + offset));
-              return previewWidth;
+              setPreviewWidth(wrap(320, Infinity, initialWidth + offset));
+              return {
+                initialWidth,
+              };
+            },
+            onDragEnd: () => {
+              setResizingDebounce.clear();
+              setResizingDebounce(false);
             },
             cursorStyle: "ew-resize",
           }}
@@ -214,7 +284,8 @@ export const Repl: Component<{
         <Show when={!error()}>
           <iframe
             ref={iframeRef}
-            src="/srcdoc.html"
+            src="/impl/srcdoc"
+            // src="/srcdoc.html"
             sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
             class="h-full w-full border-l"
           ></iframe>

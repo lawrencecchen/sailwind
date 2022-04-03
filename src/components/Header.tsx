@@ -7,11 +7,11 @@ export const Header: Component<{ replId: string; showId?: boolean }> = (
 ) => {
   const { recentlyCopied, copy } = useRecentlyCopied();
   return (
-    <div class="px-2 py-1 border-b flex items-center">
+    <div class="px-2 py-1 border-b flex items-center shrink-0">
       <Link href="/" class="font-bold">
         Sailwind
       </Link>
-      <p class="ml-4 text-xs">A very fast Tailwind/React repl.</p>
+      <p class="ml-4 text-xs">A super fast Tailwind/React repl.</p>
       <a
         href="https://github.com/lawrencecchen/sailwind"
         rel="noopener noreferrer"

@@ -1,3 +1,4 @@
+import createDebounce from "@solid-primitives/debounce";
 import {
   Accessor,
   Component,
@@ -14,14 +15,13 @@ const RecentlyCopiedContext = createContext<IRecentlyCopiedContext>();
 
 export const RecentlyCopiedProvider: Component = (props) => {
   const [recentlyCopied, setRecentlyCopied] = createSignal(false);
-  let timeout: any;
+  const setRecentlyCopiedDebounced = createDebounce(setRecentlyCopied, 3000);
+
   function copy(s: string) {
-    setRecentlyCopied(true);
     navigator.clipboard.writeText(s);
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      setRecentlyCopied(false);
-    }, 3000);
+    setRecentlyCopiedDebounced.clear();
+    setRecentlyCopied(true);
+    setRecentlyCopiedDebounced(false);
   }
   const value = {
     recentlyCopied,

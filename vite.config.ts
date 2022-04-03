@@ -1,8 +1,7 @@
 import { defineConfig } from "vite";
 import solid from "solid-start";
 import Unocss from "unocss/vite";
-import { presetIcons } from "unocss";
-import fs from "fs";
+import { presetIcons, presetUno } from "unocss";
 
 export default defineConfig({
   plugins: [
@@ -14,6 +13,7 @@ export default defineConfig({
             display: "inline-block",
           },
         }),
+        presetUno(),
       ],
     }),
   ],
@@ -22,11 +22,10 @@ export default defineConfig({
       sucrase: "sucrase/dist/index.js",
     },
   },
+  optimizeDeps: {
+    include: [],
+  },
   server: {
-    // https: {
-    //   key: fs.readFileSync("./.cert/key.pem"),
-    //   cert: fs.readFileSync("./.cert/cert.pem"),
-    // },
     proxy: {
       "/ws": {
         target: "ws://localhost:1234",
@@ -37,10 +36,6 @@ export default defineConfig({
     },
   },
   preview: {
-    // https: {
-    //   key: fs.readFileSync("./.cert/key.pem"),
-    //   cert: fs.readFileSync("./.cert/cert.pem"),
-    // },
     proxy: {
       "/ws": {
         target: "ws://localhost:1234",
