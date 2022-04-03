@@ -1,0 +1,21 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "HOST=localhost PORT=8080 YPERSISTENCE=./dbDir node ./node_modules/y-websocket/bin/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "y-websocket": "^1.4.0"
+  },
+  "devDependencies": {
+    "yjs": "^13.5.33"
+  },
+  "peerDependencies": {
+    "yjs": "^13.5.33"
+  }
+}
