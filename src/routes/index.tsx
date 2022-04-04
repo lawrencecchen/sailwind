@@ -12,9 +12,11 @@ export default function Home() {
   const replId = useRouteData<string>();
 
   return (
-    <div class="flex flex-col h-full">
-      <Header replId={replId} />
-      <Repl replId={replId} defaultValue={DEFAULT_CODE} />
-    </div>
+    <>
+      <div class="flex flex-col h-full">
+        <Header replId={replId} />
+        <Repl replId={replId} defaultValue={DEFAULT_CODE} />
+      </div>
+    </>
   );
 }

@@ -10,15 +10,14 @@ export default function Root() {
   if (location.pathname === "/impl/srcdoc") {
     return <Srcdoc />;
   }
-  // if (location.pathname === "/foober/srcdoc") {
-  //   return <Srcdoc />;
-  // }
 
   return (
     <html lang="en" class="h-full">
       <head>
+        <title>Sailwind</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="A super fast Tailwind/React repl." />
         <Meta />
         <Links />
         <link
