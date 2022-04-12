@@ -1,7 +1,25 @@
 {
   "name": "sailwind",
   "version": "0.1.0",
-  "description": "Fast multiplayer Tailwind repl built with Solid.",
+  "description": "A fast multiplayer Tailwind repl built with Solid.",
+  "info": "A very fast Tailwind + React Repl. Inspired by the Vue SFC repl, the Svelte Repl, unocss and motif.land.",
+  "homepage": "https://sailwind.dev",
+  "contributors": [
+    {
+      "name": "Lawrence Chen",
+      "email": "lawrencechen2002@gmail.com",
+      "url": "https://lawrencechen.dev"
+    }
+  ],
+  "keywords": [
+    "solidhack",
+    "best_student_project"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lawrencecchen/sailwind"
+  },
+  "license": "MIT",
   "scripts": {
     "dev": "concurrently pnpm:dev:*",
     "dev:solid": "solid-start dev",
