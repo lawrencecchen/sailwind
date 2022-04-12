@@ -1,5 +1,7 @@
 {
   "name": "sailwind",
+  "version": "0.1.0",
+  "description": "Fast multiplayer Tailwind repl built with Solid.",
   "scripts": {
     "dev": "concurrently pnpm:dev:*",
     "dev:solid": "solid-start dev",

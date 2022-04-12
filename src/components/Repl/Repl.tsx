@@ -381,29 +381,27 @@ export const Repl: Component<{
           }}
         ></div>
         <Show when={!error()}>
-          <div className="h-full w-full border-l relative">
-            <iframe
-              ref={iframeRef}
-              src="/impl/srcdoc"
-              sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
-              class="h-full w-full"
-              onLoad={() => setIframeLoaded(true)}
-            ></iframe>
-            <Transition
-              exitClass="opacity-100"
-              exitToClass="opacity-0"
-              exitActiveClass="duration-200 transition"
-            >
-              <Show when={!iframeLoaded()}>
-                <div class="absolute left-1/2 right-1/2 top-1/2 transform -translate-y-1/2">
-                  <div
-                    aria-label="Loading..."
-                    class="i-gg-spinner w-8 h-8 animate-spin bg-gray-500"
-                  />
-                </div>
-              </Show>
-            </Transition>
-          </div>
+          <iframe
+            ref={iframeRef}
+            src="/impl/srcdoc"
+            sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
+            class="h-full w-full border-l"
+            onLoad={() => setIframeLoaded(true)}
+          ></iframe>
+          <Transition
+            exitClass="opacity-100"
+            exitToClass="opacity-0"
+            exitActiveClass="duration-200 transition"
+          >
+            <Show when={!iframeLoaded()}>
+              <div class="absolute left-1/2 right-1/2 top-1/2 transform -translate-y-1/2">
+                <div
+                  aria-label="Loading..."
+                  class="i-gg-spinner w-8 h-8 animate-spin bg-gray-500"
+                />
+              </div>
+            </Show>
+          </Transition>
         </Show>
       </div>
     </div>

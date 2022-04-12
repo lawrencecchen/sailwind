@@ -12,7 +12,7 @@ export const Header: Component<{ replId: string; showId?: boolean }> = (
         <Link href="/" class="font-bold">
           Sailwind
         </Link>
-        <p class="ml-4 text-xs">A super fast Tailwind/React repl.</p>
+        <p class="ml-4 text-xs">A super fast Tailwind repl.</p>
         <a
           href="https://github.com/lawrencecchen/sailwind"
           rel="noopener noreferrer"
