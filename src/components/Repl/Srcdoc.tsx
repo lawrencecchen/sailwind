@@ -144,7 +144,7 @@ const Srcdoc = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link
           rel="stylesheet"
-          href="https://cdn.skypack.dev/@unocss/reset/tailwind.min.css"
+          href="https://unpkg.com/@unocss/reset@0.31.0/tailwind.css"
         />
         {/* <link
           rel="stylesheet"
