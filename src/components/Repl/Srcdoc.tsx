@@ -7,7 +7,6 @@ const HoveredElement: Component<{ boundingClientRect: DOMRect }> = (props) => {
   return (
     <div
       class="bg-blue-900 opacity-10 ring ring-inset"
-      // class="ring ring-inset"
       style={{
         transform: `translate(${props.boundingClientRect.left}px, ${props.boundingClientRect.top}px)`,
         width: `${props.boundingClientRect.width}px`,
@@ -145,8 +144,12 @@ const Srcdoc = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link
           rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/@unocss/reset/tailwind.min.css"
+          href="https://cdn.skypack.dev/@unocss/reset/tailwind.min.css"
         />
+        {/* <link
+          rel="stylesheet"
+          href="https://cdn.skypack.dev/@tailwindcss/forms@0.4.0/dist/forms.min.css"
+        /> */}
       </head>
       <body>
         <div id="root"></div>

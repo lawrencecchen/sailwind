@@ -6,6 +6,7 @@ import {
   createSignal,
   useContext,
 } from "solid-js";
+import { invariant } from "./invariant";
 
 interface IRecentlyCopiedContext {
   recentlyCopied: Accessor<boolean>;
@@ -36,10 +37,9 @@ export const RecentlyCopiedProvider: Component = (props) => {
 
 export function useRecentlyCopied() {
   const context = useContext(RecentlyCopiedContext);
-  if (!context) {
-    throw new Error(
-      "useRecentlyCopied must be used within a RecentlyCopiedProvider"
-    );
-  }
+  invariant(
+    context,
+    "useRecentlyCopied must be used within a RecentlyCopiedProvider"
+  );
   return context;
 }

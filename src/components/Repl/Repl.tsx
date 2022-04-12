@@ -63,7 +63,7 @@ const CodeMirror: Component<{
   return <div ref={divRef} class="h-full flex-grow" />;
 };
 
-export const DEFAULT_CODE = `import React from "https://cdn.skypack.dev/react";
+export const DEFAULT_CODE_1 = `import React from "https://cdn.skypack.dev/react";
 import ReactDOM from "https://cdn.skypack.dev/react-dom";
 
 function App() {
@@ -72,6 +72,110 @@ function App() {
 
 ReactDOM.render(<App />, document.getElementById("root"));
 `;
+
+export const DEFAULT_CODE_2 = `import React from "https://cdn.skypack.dev/react";
+import ReactDOM from "https://cdn.skypack.dev/react-dom";
+
+function App() {
+  return <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
+    <img
+      src="https://play.tailwindcss.com/img/beams.jpg"
+      alt=""
+      className="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2"
+      width={1308}
+    />
+    <div className="absolute inset-0 bg-[url(https://play.tailwindcss.com/img/grid.svg)] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+    <div className="relative bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-10">
+      <div className="mx-auto max-w-md">
+        <h1 className="text-2xl font-medium">Sailwind</h1>
+        <div className="divide-y divide-gray-300/50">
+          <div className="space-y-6 pb-8 pt-4 text-base leading-7 text-gray-600">
+            <p>
+              A super fast playground for Tailwind CSS, built with Solid.
+            </p>
+            <ul className="space-y-4">
+              <li className="flex items-center">
+                <svg
+                  className="h-6 w-6 flex-none fill-sky-100 stroke-sky-500 stroke-2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx={12} cy={12} r={11} />
+                  <path
+                    d="m8 13 2.165 2.165a1 1 0 0 0 1.521-.126L16 9"
+                    fill="none"
+                  />
+                </svg>
+                <p className="ml-4">
+                  Instant response. Start typing and see!
+                </p>
+              </li>
+              <li className="flex items-center">
+                <svg
+                  className="h-6 w-6 flex-none fill-sky-100 stroke-sky-500 stroke-2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx={12} cy={12} r={11} />
+                  <path
+                    d="m8 13 2.165 2.165a1 1 0 0 0 1.521-.126L16 9"
+                    fill="none"
+                  />
+                </svg>
+                <p className="ml-4">
+                  Multiplayer (click share on the top right!)
+                </p>
+              </li>
+              <li className="flex items-center">
+                <svg
+                  className="h-6 w-6 flex-none fill-sky-100 stroke-sky-500 stroke-2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx={12} cy={12} r={11} />
+                  <path
+                    d="m8 13 2.165 2.165a1 1 0 0 0 1.521-.126L16 9"
+                    fill="none"
+                  />
+                </svg>
+                <p className="ml-4">Code completion with instant preview</p>
+              </li>
+            </ul>
+            <p>
+              Perfect for learning how the framework works, prototyping a new
+              idea, or creating a demo to share online.
+            </p>
+          </div>
+          <div className="pt-8 text-base font-semibold leading-7">
+            <p className="text-gray-900">Check out some examples:</p>
+            <p className="flex flex-col">
+              <a
+                href="https://sailwind.dev/most-agreeable-hydrogen-4e1"
+                className="text-sky-500 hover:text-sky-600"
+              >
+                Modal →
+              </a>
+              <a
+                href="https://sailwind.dev/better-aggressive-cartoon-8b8"
+                className="text-sky-500 hover:text-sky-600"
+              >
+                Sign in page →
+              </a>
+              <a
+                href="https://sailwind.dev/brash-angry-nightfall-ac1"
+                className="text-sky-500 hover:text-sky-600"
+              >
+                Hot toasts →
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));`;
 
 export const Repl: Component<{
   replId: string;
@@ -121,6 +225,7 @@ export const Repl: Component<{
   const [error, setError] = createSignal(false);
   const [iframeLoaded, setIframeLoaded] = createSignal(false);
   const [resizing, setResizing] = createSignal(false);
+
   const outputJavascript = createMemo(() => {
     if (!code()) {
       return "";
@@ -150,12 +255,6 @@ export const Repl: Component<{
       console.log(error);
       return "An error.";
     }
-  });
-
-  onMount(() => {
-    iframeRef.addEventListener("load", () => {
-      setIframeLoaded(true);
-    });
   });
 
   onCleanup(() => {
@@ -282,13 +381,29 @@ export const Repl: Component<{
           }}
         ></div>
         <Show when={!error()}>
-          <iframe
-            ref={iframeRef}
-            src="/impl/srcdoc"
-            // src="/srcdoc.html"
-            sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
-            class="h-full w-full border-l"
-          ></iframe>
+          <div className="h-full w-full border-l relative">
+            <iframe
+              ref={iframeRef}
+              src="/impl/srcdoc"
+              sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
+              class="h-full w-full"
+              onLoad={() => setIframeLoaded(true)}
+            ></iframe>
+            <Transition
+              exitClass="opacity-100"
+              exitToClass="opacity-0"
+              exitActiveClass="duration-200 transition"
+            >
+              <Show when={!iframeLoaded()}>
+                <div class="absolute left-1/2 right-1/2 top-1/2 transform -translate-y-1/2">
+                  <div
+                    aria-label="Loading..."
+                    class="i-gg-spinner w-8 h-8 animate-spin bg-gray-500"
+                  />
+                </div>
+              </Show>
+            </Transition>
+          </div>
         </Show>
       </div>
     </div>
