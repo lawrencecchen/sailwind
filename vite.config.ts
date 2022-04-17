@@ -23,7 +23,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: [],
+    exclude: ["@swc/wasm-web"],
   },
   server: {
     proxy: {

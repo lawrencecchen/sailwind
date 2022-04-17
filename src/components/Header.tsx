@@ -1,11 +1,20 @@
 import { Link } from "solid-app-router";
 import { Component, Show } from "solid-js";
 import { useRecentlyCopied } from "~/lib/utils/useRecentlyCopied";
+import { useControls } from "./Repl/Controls";
 
 export const Header: Component<{ replId: string; showId?: boolean }> = (
   props
 ) => {
   const { recentlyCopied, copy } = useRecentlyCopied();
+  const {
+    setIsInspecting,
+    isInspecting,
+    showRightPanel,
+    setShowRightPanel,
+    showCode,
+    setShowCode,
+  } = useControls();
   return (
     <div class="px-2 py-1 border-b grid grid-cols-3 shrink-0">
       <div className="flex items-center">
@@ -24,11 +33,18 @@ export const Header: Component<{ replId: string; showId?: boolean }> = (
         </a>
       </div>
       <div class="flex items-center justify-center">
-        <button class="flex items-center" aria-label="Inspect element">
+        <button
+          class="flex items-center p-1"
+          aria-label="Inspect element"
+          onClick={() => setIsInspecting(!isInspecting())}
+          classList={{
+            "bg-gray-200": isInspecting(),
+          }}
+        >
           <span class="i-carbon:inspection w-5 h-5 text-gray-800" />
         </button>
       </div>
-      <div className="ml-auto mr-0">
+      <div className="ml-auto mr-0 space-x-2 flex">
         <Link
           href={"/" + props.replId}
           class="ml-2 text-sm group flex items-center h-7"
@@ -37,7 +53,7 @@ export const Header: Component<{ replId: string; showId?: boolean }> = (
           }}
         >
           <span
-            class="flex items-center bg-gray-50 border border-r-0 rounded-l px-2 h-full font-medium transition"
+            class="flex items-center bg-gray-50 border rounded-l px-2 h-full font-medium transition"
             classList={{
               "text-blue-600 bg-blue-100": recentlyCopied(),
               "text-gray-700 group-hover:bg-gray-100 group-hover:text-gray-800":
@@ -63,6 +79,28 @@ export const Header: Component<{ replId: string; showId?: boolean }> = (
             </span>
           </Show>
         </Link>
+        <button
+          class="flex items-center p-1"
+          aria-label="Toggle show code"
+          onClick={() => setShowCode(!showCode())}
+          classList={{
+            "text-blue-500": showCode(),
+            "text-gray-500": !showCode(),
+          }}
+        >
+          <span className="i-carbon-code w-5 h-5"></span>
+        </button>
+        <button
+          class="flex items-center p-1"
+          aria-label="Toggle right sidebar"
+          onClick={() => setShowRightPanel(!showRightPanel())}
+          classList={{
+            "text-blue-500": showRightPanel(),
+            "text-gray-500": !showRightPanel(),
+          }}
+        >
+          <span className="i-carbon-open-panel-filled-right w-5 h-5"></span>
+        </button>
       </div>
     </div>
   );

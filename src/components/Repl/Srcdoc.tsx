@@ -74,6 +74,10 @@ const Srcdoc = () => {
         } catch (e) {
           console.error(e);
         }
+      } else if (action === "meta.enableInspectMode") {
+        setInspectModeEnabled(true);
+      } else if (action === "meta.disableInspectMode") {
+        setInspectModeEnabled(false);
       }
     }
 
@@ -83,7 +87,9 @@ const Srcdoc = () => {
       if (e.defaultPrevented) return;
       // ensure target is a link
       let el = e.target as HTMLAnchorElement;
-      while (el && el.nodeName !== "A") el = el.parentNode as HTMLAnchorElement;
+      while (el && el.nodeName !== "A") {
+        el = el.parentNode as HTMLAnchorElement;
+      }
       if (!el || el.nodeName !== "A") return;
 
       if (
@@ -129,7 +135,9 @@ const Srcdoc = () => {
         ref,
         path,
       });
-      // setInspectModeEnabled(false);
+      setInspectModeEnabled(false);
+      console.log("fook");
+      window.parent.postMessage({ action: "meta.disableInspectMode" }, origin);
       setHoveredElement(null);
       setHoveredElementBoundingClientRect(null);
     });
