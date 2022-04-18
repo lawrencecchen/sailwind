@@ -16,7 +16,7 @@ export const Header: Component<{ replId: string; showId?: boolean }> = (
     setShowCode,
   } = useControls();
   return (
-    <div class="px-2 py-1 border-b grid grid-cols-3 shrink-0">
+    <div class="px-2 py-1 border-b grid grid-cols-2 shrink-0">
       <div className="flex items-center">
         <Link href="/" class="font-bold">
           Sailwind
@@ -31,18 +31,6 @@ export const Header: Component<{ replId: string; showId?: boolean }> = (
         >
           <span class="i-mdi-github w-5 h-5"></span>
         </a>
-      </div>
-      <div class="flex items-center justify-center">
-        <button
-          class="flex items-center p-1"
-          aria-label="Inspect element"
-          onClick={() => setIsInspecting(!isInspecting())}
-          classList={{
-            "bg-gray-200": isInspecting(),
-          }}
-        >
-          <span class="i-carbon:inspection w-5 h-5 text-gray-800" />
-        </button>
       </div>
       <div className="ml-auto mr-0 space-x-2 flex">
         <Link

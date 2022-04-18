@@ -10,6 +10,8 @@ import {
   useContext,
 } from "solid-js";
 import { invariant } from "~/lib/utils/invariant";
+import { AcornJSXElement } from "./acorn/jsx";
+import { useSync } from "./Sync";
 
 export const ControlsContext = createContext<{
   iframeRef: Accessor<HTMLIFrameElement>;
@@ -22,14 +24,18 @@ export const ControlsContext = createContext<{
   setShowRightPanel: Setter<boolean>;
   showCode: Accessor<boolean>;
   setShowCode: Setter<boolean>;
+  selectedNode: Accessor<AcornJSXElement>;
+  setSelectedNode: Setter<AcornJSXElement>;
 }>();
 
 export const ControlsProvider: Component = (props) => {
+  const { ast } = useSync();
   const [iframeRef, setIframeRef] = createSignal<HTMLIFrameElement>();
   const [iframeLoaded, setIframeLoaded] = createSignal(false);
   const [isInspecting, setIsInspecting] = createSignal(false);
   const [showRightPanel, setShowRightPanel] = createSignal(true);
   const [showCode, setShowCode] = createSignal(true);
+  const [selectedNode, setSelectedNode] = createSignal<AcornJSXElement>();
 
   return (
     <ControlsContext.Provider
@@ -44,6 +50,8 @@ export const ControlsProvider: Component = (props) => {
         setShowRightPanel,
         showCode,
         setShowCode,
+        selectedNode,
+        setSelectedNode,
       }}
     >
       {props.children}
@@ -76,6 +84,9 @@ export function useControls() {
   }
   createEffect(() => {
     const iframe = context.iframeRef();
+    if (!iframe) {
+      return;
+    }
     if (context.isInspecting()) {
       iframe.contentWindow.postMessage({ action: "meta.enableInspectMode" });
     } else {
@@ -85,15 +96,17 @@ export function useControls() {
   function messageHandler(e: MessageEvent) {
     const { action } = e.data;
     console.log(action);
-    if (action === "meta.disableInspectMode") {
+    if (action === "inspect") {
       context.setIsInspecting(false);
+      const path = e.data.path;
+      console.log(path);
     }
   }
   onMount(() => {
     window.addEventListener("message", messageHandler, false);
   });
   onCleanup(() => {
-    window.removeEventListener("message", messageHandler);
+    window.removeEventListener("message", messageHandler, false);
   });
   return {
     ...context,

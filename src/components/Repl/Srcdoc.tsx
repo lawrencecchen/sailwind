@@ -1,4 +1,5 @@
-import { Component, createEffect, createSignal, onMount, Show } from "solid-js";
+import { createEventListenerMap } from "@solid-primitives/event-listener";
+import { Component, createSignal, onCleanup, onMount, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 import { Scripts } from "solid-start/root";
 import { getDomPath } from "~/lib/utils/getDomPath";
@@ -27,122 +28,146 @@ const Srcdoc = () => {
     ref: HTMLElement;
     path: string[];
   }>();
+  let scriptEls = [];
+  let styleEls = [];
+  let origin: string;
+  const cleanupFns = [];
 
   onMount(() => {
-    let scriptEls = [];
-    let styleEls = [];
-    let origin;
-
-    async function handleMessage(e) {
-      const { action } = e.data;
-      origin = e.origin;
-      // console.log(e);
-      if (action === "eval") {
-        if (scriptEls.length) {
-          scriptEls.forEach((el) => {
-            document.head.removeChild(el);
+    cleanupFns.push(
+      createEventListenerMap<{
+        mousemove: MouseEvent;
+        click: MouseEvent;
+      }>(window, {
+        mousemove: (e) => {
+          if (!inspectModeEnabled()) return;
+          if (hoveredElement() !== e.target) {
+            const el = e.target as HTMLElement;
+            setHoveredElement(el);
+            setHoveredElementBoundingClientRect(el.getBoundingClientRect());
+          }
+        },
+        click: (e) => {
+          if (!inspectModeEnabled()) return;
+          const ref = e.target as HTMLElement;
+          const path = getDomPath(ref);
+          setSelectedElement({
+            ref,
+            path,
           });
-          scriptEls.length = 0;
-        }
+          setInspectModeEnabled(false);
+          window.parent.postMessage({ action: "inspect", path }, origin);
+          setHoveredElement(null);
+          setHoveredElementBoundingClientRect(null);
+        },
+      })
+    );
 
-        if (styleEls.length) {
-          styleEls.forEach((el) => {
-            document.head.removeChild(el);
-          });
-          styleEls.length = 0;
-        }
+    cleanupFns.push(
+      createEventListenerMap<{
+        click: MouseEvent;
+        mouseleave: MouseEvent;
+      }>(document.body, {
+        click: (e) => {
+          if (e.which !== 1) return;
+          if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+          if (e.defaultPrevented) return;
+          // ensure target is a link
+          let el = e.target as HTMLAnchorElement;
+          while (el && el.nodeName !== "A") {
+            el = el.parentNode as HTMLAnchorElement;
+          }
+          if (!el || el.nodeName !== "A") return;
 
-        try {
-          const { scripts, styles } = e.data;
+          if (
+            el.hasAttribute("download") ||
+            el.getAttribute("rel") === "external" ||
+            el.target
+          )
+            return;
 
-          for (const script of scripts) {
-            const scriptEl = document.createElement("script");
-            scriptEl.setAttribute("type", "module");
-            document.head.appendChild(scriptEl);
-            scriptEl.innerHTML = script;
-            // scriptEl.innerHTML = script + `\nwindow.__next__()`
-            // scriptEl.onrror = err => send_error(err.message, err.stack)
-            scriptEls.push(scriptEl);
+          e.preventDefault();
+
+          if (el.href.startsWith(origin)) {
+            const url = new URL(el.href);
+            if (url.hash[0] === "#") {
+              window.location.hash = url.hash;
+              return;
+            }
           }
 
-          for (const style of styles) {
-            const styleEl = document.createElement("style");
-            document.head.appendChild(styleEl);
-            styleEl.innerHTML = style;
-            styleEls.push(styleEl);
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      } else if (action === "meta.enableInspectMode") {
-        setInspectModeEnabled(true);
-      } else if (action === "meta.disableInspectMode") {
-        setInspectModeEnabled(false);
-      }
-    }
+          window.open(el.href, "_blank");
+        },
+        mouseleave: (e) => {
+          setHoveredElement(null);
+          setHoveredElementBoundingClientRect(null);
+        },
+      })
+    );
 
-    document.body.addEventListener("click", (e: MouseEvent) => {
-      if (e.which !== 1) return;
-      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-      if (e.defaultPrevented) return;
-      // ensure target is a link
-      let el = e.target as HTMLAnchorElement;
-      while (el && el.nodeName !== "A") {
-        el = el.parentNode as HTMLAnchorElement;
-      }
-      if (!el || el.nodeName !== "A") return;
+    cleanupFns.push(
+      createEventListenerMap<{
+        message: any;
+      }>(
+        window,
+        {
+          message: (e) => {
+            const { action } = e.data;
+            origin = e.origin;
+            // console.log(e);
+            if (action === "eval") {
+              if (scriptEls.length) {
+                scriptEls.forEach((el) => {
+                  document.head.removeChild(el);
+                });
+                scriptEls.length = 0;
+              }
 
-      if (
-        el.hasAttribute("download") ||
-        el.getAttribute("rel") === "external" ||
-        el.target
+              if (styleEls.length) {
+                styleEls.forEach((el) => {
+                  document.head.removeChild(el);
+                });
+                styleEls.length = 0;
+              }
+
+              try {
+                const { scripts, styles } = e.data;
+
+                for (const script of scripts) {
+                  const scriptEl = document.createElement("script");
+                  scriptEl.setAttribute("type", "module");
+                  document.head.appendChild(scriptEl);
+                  scriptEl.innerHTML = script;
+                  // scriptEl.innerHTML = script + `\nwindow.__next__()`
+                  // scriptEl.onrror = err => send_error(err.message, err.stack)
+                  scriptEls.push(scriptEl);
+                }
+
+                for (const style of styles) {
+                  const styleEl = document.createElement("style");
+                  document.head.appendChild(styleEl);
+                  styleEl.innerHTML = style;
+                  styleEls.push(styleEl);
+                }
+              } catch (e) {
+                console.error(e);
+              }
+            } else if (action === "meta.enableInspectMode") {
+              setInspectModeEnabled(true);
+            } else if (action === "meta.disableInspectMode") {
+              setInspectModeEnabled(false);
+            }
+          },
+        },
+        false
       )
-        return;
+    );
+  });
 
-      e.preventDefault();
-
-      if (el.href.startsWith(origin)) {
-        const url = new URL(el.href);
-        if (url.hash[0] === "#") {
-          window.location.hash = url.hash;
-          return;
-        }
-      }
-
-      window.open(el.href, "_blank");
-    });
-
-    window.addEventListener("mousemove", (e) => {
-      if (!inspectModeEnabled()) return;
-      if (hoveredElement() !== e.target) {
-        const el = e.target as HTMLElement;
-        setHoveredElement(el);
-        setHoveredElementBoundingClientRect(el.getBoundingClientRect());
-      }
-    });
-
-    document.body.addEventListener("mouseleave", (e) => {
-      setHoveredElement(null);
-      setHoveredElementBoundingClientRect(null);
-    });
-
-    window.addEventListener("click", (e) => {
-      if (!inspectModeEnabled()) return;
-      const ref = e.target as HTMLElement;
-      const path = getDomPath(ref);
-      console.log(path);
-      setSelectedElement({
-        ref,
-        path,
-      });
-      setInspectModeEnabled(false);
-      console.log("fook");
-      window.parent.postMessage({ action: "meta.disableInspectMode" }, origin);
-      setHoveredElement(null);
-      setHoveredElementBoundingClientRect(null);
-    });
-
-    window.addEventListener("message", handleMessage, false);
+  onCleanup(() => {
+    for (const cleanup of cleanupFns) {
+      cleanup();
+    }
   });
 
   return (

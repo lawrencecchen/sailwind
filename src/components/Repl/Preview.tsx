@@ -9,7 +9,7 @@ drag;
 export const Preview: Component<{
   scripts: string | string[];
   styles: string | string[];
-  error: any;
+  errors: any[];
 }> = (props) => {
   const [previewWidth, setPreviewWidth] = createSignal<number>();
   const [resizing, setResizing] = createSignal(false);
@@ -25,7 +25,7 @@ export const Preview: Component<{
   let previewRef: HTMLDivElement;
   const setResizingDebounce = createDebounce(setResizing, 1000);
   createEffect(() => {
-    if (iframeLoaded() && !props.error) {
+    if (iframeLoaded() && props.errors.length === 0) {
       if (props.scripts) {
         evalScripts(props.scripts);
       }
@@ -34,15 +34,26 @@ export const Preview: Component<{
       }
     }
   });
+  function getWidth(previewWidth: number, showCode: boolean) {
+    if (!showCode) {
+      return "auto";
+    }
+    if (previewWidth) {
+      return previewWidth + "px";
+    }
+    return "50%";
+  }
   return (
     <>
       <div
         style={{
-          width: showCode()
-            ? previewWidth()
-              ? previewWidth() + "px"
-              : "50%"
-            : "auto",
+          //   width: showCode()
+          //     ? previewWidth()
+          //       ? previewWidth() + "px"
+          //       : "50%"
+          //     : "auto",
+          //   width: previewWidth() ? previewWidth() + "px" : "auto",
+          width: getWidth(previewWidth(), showCode()),
           "min-width": "320px",
           "max-width": showCode() ? "calc(100% - 50px)" : "100%",
         }}
@@ -87,7 +98,10 @@ export const Preview: Component<{
             cursorStyle: "ew-resize",
           }}
         ></div>
-        <Show when={!props.error}>
+        <Show
+          when={props.errors.length === 0}
+          fallback={<p>An error occurred</p>}
+        >
           <iframe
             ref={setIframeRef}
             src="/impl/srcdoc"

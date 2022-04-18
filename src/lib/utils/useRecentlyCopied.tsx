@@ -1,8 +1,10 @@
 import createDebounce from "@solid-primitives/debounce";
+import { useLocation } from "solid-app-router";
 import {
   Accessor,
   Component,
   createContext,
+  createEffect,
   createSignal,
   useContext,
 } from "solid-js";
@@ -17,6 +19,15 @@ const RecentlyCopiedContext = createContext<IRecentlyCopiedContext>();
 export const RecentlyCopiedProvider: Component = (props) => {
   const [recentlyCopied, setRecentlyCopied] = createSignal(false);
   const setRecentlyCopiedDebounced = createDebounce(setRecentlyCopied, 3000);
+  const location = useLocation();
+
+  createEffect((prevPathname) => {
+    if (prevPathname !== "/" && location.pathname === "/" && recentlyCopied()) {
+      setRecentlyCopiedDebounced.clear();
+      setRecentlyCopied(false);
+    }
+    return location.pathname;
+  });
 
   function copy(s: string) {
     navigator.clipboard.writeText(s);

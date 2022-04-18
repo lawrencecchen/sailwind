@@ -1,6 +1,7 @@
 import { EditorState, EditorView } from "@codemirror/basic-setup";
 import { Extension } from "@codemirror/state";
 import { Component, onCleanup, onMount } from "solid-js";
+import { isServer } from "solid-js/web";
 import { IndexeddbPersistence } from "y-indexeddb";
 import { WebsocketProvider } from "y-websocket";
 import * as Y from "yjs";
