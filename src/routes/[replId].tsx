@@ -1,5 +1,6 @@
 import { RouteDataFunc, useRouteData } from "solid-app-router";
 import { Header } from "~/components/Header";
+import { CodeMirrorProvider } from "~/components/Repl/Codemirror";
 import { ControlsProvider } from "~/components/Repl/Controls";
 import { Repl } from "~/components/Repl/Repl";
 import { SyncProvider } from "~/components/Repl/Sync";
@@ -15,8 +16,10 @@ export default function ReplRoute() {
     <div class="flex flex-col h-full">
       <SyncProvider docId={replId} enableWebsocketProvider={true}>
         <ControlsProvider>
-          <Header replId={replId} showId={true} />
-          <Repl />
+          <CodeMirrorProvider>
+            <Header replId={replId} showId={true} />
+            <Repl />
+          </CodeMirrorProvider>
           {/* {() => {
                 const { isRightPanelOpen } = useControls();
                 return (

@@ -11,6 +11,7 @@ import {
 } from "solid-js";
 import { invariant } from "~/lib/utils/invariant";
 import { AcornJSXElement } from "./acorn/jsx";
+import { SelectedElement } from "./Srcdoc";
 import { useSync } from "./Sync";
 
 export const ControlsContext = createContext<{
@@ -26,16 +27,20 @@ export const ControlsContext = createContext<{
   setShowCode: Setter<boolean>;
   selectedNode: Accessor<AcornJSXElement>;
   setSelectedNode: Setter<AcornJSXElement>;
+  inspectedElementPath: Accessor<string[]>;
+  setInspectedElementPath: Setter<string[]>;
 }>();
 
 export const ControlsProvider: Component = (props) => {
-  const { ast } = useSync();
   const [iframeRef, setIframeRef] = createSignal<HTMLIFrameElement>();
   const [iframeLoaded, setIframeLoaded] = createSignal(false);
   const [isInspecting, setIsInspecting] = createSignal(false);
   const [showRightPanel, setShowRightPanel] = createSignal(true);
   const [showCode, setShowCode] = createSignal(true);
   const [selectedNode, setSelectedNode] = createSignal<AcornJSXElement>();
+  const [inspectedElementPath, setInspectedElementPath] = createSignal<
+    string[]
+  >([]);
 
   return (
     <ControlsContext.Provider
@@ -52,6 +57,8 @@ export const ControlsProvider: Component = (props) => {
         setShowCode,
         selectedNode,
         setSelectedNode,
+        inspectedElementPath,
+        setInspectedElementPath,
       }}
     >
       {props.children}
@@ -61,6 +68,7 @@ export const ControlsProvider: Component = (props) => {
 
 export function useControls() {
   const context = useContext(ControlsContext);
+  const { ast } = useSync();
   invariant(context, "usePreviewContext must be used within a PreviewProvider");
   function evalScripts(script: string | string[]) {
     const iframe = context.iframeRef();
@@ -95,11 +103,9 @@ export function useControls() {
   });
   function messageHandler(e: MessageEvent) {
     const { action } = e.data;
-    console.log(action);
     if (action === "inspect") {
       context.setIsInspecting(false);
-      const path = e.data.path;
-      console.log(path);
+      context.setInspectedElementPath(e.data.path);
     }
   }
   onMount(() => {

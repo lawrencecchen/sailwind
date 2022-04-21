@@ -11,7 +11,7 @@ export const Preview: Component<{
   styles: string | string[];
   errors: any[];
 }> = (props) => {
-  const [previewWidth, setPreviewWidth] = createSignal<number>();
+  const [previewWidth, setPreviewWidth] = createSignal<number>(500);
   const [resizing, setResizing] = createSignal(false);
   const {
     setIframeRef,
@@ -19,6 +19,7 @@ export const Preview: Component<{
     setIframeLoaded,
     evalScripts,
     evalStyles,
+    showRightPanel,
   } = useControls();
   const { showCode } = useControls();
 
@@ -34,7 +35,14 @@ export const Preview: Component<{
       }
     }
   });
-  function getWidth(previewWidth: number, showCode: boolean) {
+  function getWidth(
+    previewWidth: number,
+    showCode: boolean,
+    showRightPanel: boolean
+  ) {
+    if (showRightPanel) {
+      return `min(calc(100% - 241px - 50px), ${previewWidth}px)`;
+    }
     if (!showCode) {
       return "auto";
     }
@@ -53,7 +61,7 @@ export const Preview: Component<{
           //       : "50%"
           //     : "auto",
           //   width: previewWidth() ? previewWidth() + "px" : "auto",
-          width: getWidth(previewWidth(), showCode()),
+          width: getWidth(previewWidth(), showCode(), showRightPanel()),
           "min-width": "320px",
           "max-width": showCode() ? "calc(100% - 50px)" : "100%",
         }}

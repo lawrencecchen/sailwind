@@ -21,6 +21,7 @@ import { WebsocketProvider } from "y-websocket";
 import * as Y from "yjs";
 import { invariant } from "~/lib/utils/invariant";
 import { parser } from "./acorn";
+import remap from "import-remap";
 
 interface SyncProviderProps {
   ydoc?: Y.Doc;
@@ -109,6 +110,14 @@ function getUndoManager(yText: Y.Text) {
   return undoManager;
 }
 
+// const importMap = {
+//   react: "https://cdn.skypack.dev/react",
+//   "react-dom": "https://cdn.skypack.dev/react-dom",
+//   "@heroicons/react": "https://cdn.skypack.dev/@heroicons/react/solid/esm",
+// };
+
+// function remapImports(code: string) {}
+
 export const SyncProvider: Component<SyncProviderProps> = (props) => {
   props = mergeProps(
     { enableWebsocketProvider: false, defaultValue: "" },
@@ -137,6 +146,7 @@ export const SyncProvider: Component<SyncProviderProps> = (props) => {
     }
     try {
       setErrors((e) => e.filter((e) => e.type !== "script"));
+      // const remappedImports = remapImports(code());
       const compiled = transform(code(), {
         transforms: ["typescript", "jsx"],
       });

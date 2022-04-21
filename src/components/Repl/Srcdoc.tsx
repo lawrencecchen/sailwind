@@ -4,6 +4,11 @@ import { Portal } from "solid-js/web";
 import { Scripts } from "solid-start/root";
 import { getDomPath } from "~/lib/utils/getDomPath";
 
+export interface SelectedElement {
+  ref: HTMLElement;
+  path: string[];
+}
+
 const HoveredElement: Component<{ boundingClientRect: DOMRect }> = (props) => {
   return (
     <div
@@ -24,14 +29,20 @@ const Srcdoc = () => {
     hoveredElementBoundingClientRect,
     setHoveredElementBoundingClientRect,
   ] = createSignal<DOMRect>();
-  const [selectedElement, setSelectedElement] = createSignal<{
-    ref: HTMLElement;
-    path: string[];
-  }>();
+  const [selectedElement, setSelectedElement] = createSignal<SelectedElement>();
   let scriptEls = [];
   let styleEls = [];
   let origin: string;
   const cleanupFns = [];
+  const importMap = {
+    imports: {
+      react: "https://cdn.skypack.dev/react",
+      "react-dom": "https://cdn.skypack.dev/react-dom",
+      "@heroicons/react": "https://cdn.skypack.dev/@heroicons/react/solid/esm",
+      "@heroicons/react/solid":
+        "https://cdn.skypack.dev/@heroicons/react/solid/esm",
+    },
+  };
 
   onMount(() => {
     cleanupFns.push(
@@ -123,12 +134,14 @@ const Srcdoc = () => {
                 scriptEls.length = 0;
               }
 
+              // Keep previous style around to prevent layout shift
               if (styleEls.length) {
-                styleEls.forEach((el) => {
-                  document.head.removeChild(el);
-                });
-                styleEls.length = 0;
+                for (let i = 0; i < styleEls.length - 1; i++) {
+                  document.head.removeChild(styleEls[i]);
+                }
+                styleEls = styleEls.slice(-1);
               }
+              console.log(styleEls);
 
               try {
                 const { scripts, styles } = e.data;
@@ -183,6 +196,16 @@ const Srcdoc = () => {
           rel="stylesheet"
           href="https://cdn.skypack.dev/@tailwindcss/forms@0.4.0/dist/forms.min.css"
         /> */}
+        <script
+          async
+          src="https://ga.jspm.io/npm:es-module-shims@1.5.4/dist/es-module-shims.js"
+        ></script>
+
+        {/* <script
+          async
+          src="https://cdn.skypack.dev/pin/es-module-shims@v1.5.4-wF5mtOxBY368NJzvPr5V/mode=imports,min/optimized/es-module-shims.js"
+        ></script> */}
+        <script type="importmap" innerHTML={JSON.stringify(importMap)}></script>
       </head>
       <body>
         <div id="root"></div>

@@ -8,7 +8,7 @@ export interface AcornJSXElement {
   end: number;
   openingElement: OpeningElement;
   closingElement: ClosingElement;
-  children: Children[];
+  children: AcornChildren[];
 }
 
 export interface OpeningElement {
@@ -50,10 +50,21 @@ export interface ClosingElement {
   name: Name;
 }
 
-export interface Children {
+// export interface AcornChildren {
+//   type: string;
+//   start: number;
+//   end: number;
+//   value: string;
+//   raw: string;
+// }
+
+export interface AcornChildren {
   type: string;
   start: number;
   end: number;
-  value: string;
-  raw: string;
+  value?: string;
+  raw?: string;
+  openingElement?: OpeningElement;
+  closingElement?: ClosingElement;
+  children?: AcornChildren[];
 }
