@@ -8,8 +8,6 @@ export const Header: Component<{ replId: string; showId?: boolean }> = (
 ) => {
   const { recentlyCopied, copy } = useRecentlyCopied();
   const {
-    setIsInspecting,
-    isInspecting,
     showRightPanel,
     setShowRightPanel,
     showCode,

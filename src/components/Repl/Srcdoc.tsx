@@ -41,6 +41,11 @@ const Srcdoc = () => {
       "@heroicons/react": "https://cdn.skypack.dev/@heroicons/react/solid/esm",
       "@heroicons/react/solid":
         "https://cdn.skypack.dev/@heroicons/react/solid/esm",
+      "@radix-ui/react-dropdown-menu":
+        "https://cdn.skypack.dev/@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-icons": "https://cdn.skypack.dev/@radix-ui/react-icons",
+      "@stitches/react": "https://cdn.skypack.dev/@stitches/react",
+      "@radix-ui/colors": "https://cdn.skypack.dev/@radix-ui/colors",
     },
   };
 
@@ -125,7 +130,6 @@ const Srcdoc = () => {
           message: (e) => {
             const { action } = e.data;
             origin = e.origin;
-            // console.log(e);
             if (action === "eval") {
               if (scriptEls.length) {
                 scriptEls.forEach((el) => {
@@ -141,7 +145,6 @@ const Srcdoc = () => {
                 }
                 styleEls = styleEls.slice(-1);
               }
-              console.log(styleEls);
 
               try {
                 const { scripts, styles } = e.data;
