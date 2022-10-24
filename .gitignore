@@ -23,3 +23,8 @@ gitignore
 Thumbs.db
 
 dbDir
+
+# i can't figure out reproducible builds
+
+.solid
+dist
